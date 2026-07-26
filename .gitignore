@@ -1,0 +1,10 @@
+.env
+
+__pycache__/
+*.py[cod]
+vh/
+venv/
+.venv/
+
+chroma_langchain_db/
+temp_*.pdf
