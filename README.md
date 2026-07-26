@@ -18,6 +18,24 @@ This tool allows students to query course materials with source citations and en
 
 ## Tech Stack (Target)
 
-- **Frontend:** React / Next.js, Tailwind CSS
+- **Frontend:** React, Vite
 - **Backend:** Python (FastAPI)
 - **AI & RAG:** GEMINI API / LangChain, ChromaDB (Vector Store)
+
+## How to Run
+
+1. Create a venv
+
+2. Run `pip install -r requirements.txt`
+
+3. Create a `.env` file and fill in your own `GEMINI_API_KEY`
+
+4. Run `uvicorn main:app --reload`
+
+5. `cd frontend`
+
+6. `npm install`
+
+7. `npm run dev`
+
+
