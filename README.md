@@ -3,6 +3,7 @@
 This tool allows students to query course materials with source citations and enables instructors/TAs to auto-generate quizzes from lecture slides.
 
 ---
+<img width="875" height="536" alt="image" src="https://github.com/user-attachments/assets/628e0780-108b-4717-aedb-6db5d4ebe85e" />
 
 ## Core Features
 
