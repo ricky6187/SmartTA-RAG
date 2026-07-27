@@ -23,7 +23,7 @@ This tool allows students to query course materials with source citations and en
 - **Backend:** Python (FastAPI)
 - **AI & RAG:** GEMINI API / LangChain, ChromaDB (Vector Store)
 
-## How to Run (You might need a VPN to run)
+## How to Run (You might need a VPN to use gemini api)
 
 1. Create a venv
 
