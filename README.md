@@ -3,7 +3,7 @@
 This tool allows students to query course materials with source citations and enables instructors/TAs to auto-generate quizzes from lecture slides.
 
 ---
-<img width="875" height="536" alt="image" src="https://github.com/user-attachments/assets/628e0780-108b-4717-aedb-6db5d4ebe85e" />
+<img width="1148" height="795" alt="image" src="https://github.com/user-attachments/assets/3a75ab6a-4760-456e-a332-369d4d1886a4" />
 
 ## Core Features
 
@@ -23,7 +23,7 @@ This tool allows students to query course materials with source citations and en
 - **Backend:** Python (FastAPI)
 - **AI & RAG:** GEMINI API / LangChain, ChromaDB (Vector Store)
 
-## How to Run
+## How to Run (You might need a VPN to run)
 
 1. Create a venv
 
