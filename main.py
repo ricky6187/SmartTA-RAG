@@ -36,7 +36,7 @@ app.add_middleware(
 vectorstore = None
 raw_docs = []
 
-# 初始化 Embedding 與 LLM
+# init Embedding and LLM
 embeddings = GoogleGenerativeAIEmbeddings(
     model="models/gemini-embedding-001",
     google_api_key=api_key
