@@ -11,7 +11,7 @@ This tool allows students to query course materials with source citations and en
    - Upload course syllabus, lecture slides (PDF/Markdown).
    - Context-aware QA with direct page/paragraph citations to prevent hallucination.
 
-2. **AI Quiz & Flashcard Generator**
+2. **AI Quiz Generator**
    - Auto-generate multiple-choice questions (MCQs) and quiz from lecture note.
    - Structured JSON outputs for interactive test-taking and immediate feedback.
 
