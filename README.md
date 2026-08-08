@@ -25,7 +25,7 @@ This tool allows students to query course materials with source citations and en
 
 ## How to Run (You might need a VPN to use gemini api)
 
-1. Create a virtual env `python -m venv .venv`
+1. Create a virtual env `python -m venv .venv` and activate it
 
 2. Run `pip install -r requirements.txt`
 
