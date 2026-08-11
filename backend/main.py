@@ -38,18 +38,23 @@ vectorstore = None
 raw_docs = []
 
 # init Embedding and LLM
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/gemini-embedding-001",
-    google_api_key=api_key,
-     transport="rest"
-)
+try:
+    embeddings = GoogleGenerativeAIEmbeddings(
+        model="models/gemini-embedding-001",
+        google_api_key=api_key
+    )
+except Exception as err:
+    print(f"error: {err}")
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-3.5-flash",
-    google_api_key=api_key,
-    temperature=0.2,
-    transport="rest"
-)
+try:   
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-3.5-flash",
+        google_api_key=api_key,
+        temperature=0.2
+    )
+except Exception as err:
+    print(f"error: {err}")
+
 
 # Request Pydantic Model
 # define the body from frontend
