@@ -20,17 +20,18 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
 if not api_key:
+    print("api key is missing!")
     raise ValueError("Please set GEMINI_API_KEY in .env!")
 
 app = FastAPI(title="AI Course TA System API", version="1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://smartta-rag-frontend.onrender.com"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET","POST"],
     allow_headers=["*"],
-) # only for dev
+)
 
 # global var (in-memo)
 vectorstore = None
