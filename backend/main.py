@@ -39,13 +39,15 @@ raw_docs = []
 # init Embedding and LLM
 embeddings = GoogleGenerativeAIEmbeddings(
     model="models/gemini-embedding-001",
-    google_api_key=api_key
+    google_api_key=api_key,
+     transport="rest"
 )
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-3.5-flash",
     google_api_key=api_key,
-    temperature=0.2
+    temperature=0.2,
+    transport="rest"
 )
 
 # Request Pydantic Model
