@@ -1,6 +1,8 @@
 import os
 import sys
 import shutil
+import asyncio
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -17,7 +19,32 @@ if not api_key:
 
 print("API key found")
 
-app = FastAPI(title="AI Course TA System API", version="1.0")
+
+def _warmup():
+    """Pre-load heavy imports + init models in background so first request is fast."""
+    print("Warming up imports (background)...")
+    try:
+        from langchain_community.document_loaders import PyPDFLoader          # noqa: F401
+        from langchain_text_splitters import RecursiveCharacterTextSplitter   # noqa: F401
+        from langchain_community.vectorstores import Chroma                   # noqa: F401
+        from langchain_google_genai import GoogleGenerativeAIEmbeddings       # noqa: F401
+        from langchain_google_genai import ChatGoogleGenerativeAI             # noqa: F401
+        print("Heavy imports cached")
+        _init_embeddings()
+        _init_llm()
+        print("Warmup complete")
+    except Exception as e:
+        print(f"Warmup failed (will retry on first request): {e}")
+
+
+@asynccontextmanager
+async def lifespan(app):
+    loop = asyncio.get_running_loop()
+    loop.run_in_executor(None, _warmup)
+    yield
+
+
+app = FastAPI(title="AI Course TA System API", version="1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,7 +70,6 @@ def _init_embeddings():
             model="models/gemini-embedding-001",
             google_api_key=api_key
         )
-        print("Embeddings initialized OK")
     return embeddings
 
 
@@ -57,7 +83,6 @@ def _init_llm():
             google_api_key=api_key,
             temperature=0.2
         )
-        print("LLM initialized OK")
     return llm
 
 
@@ -78,21 +103,17 @@ async def upload_pdf(file: UploadFile = File(...)):
     """Receives uploaded PDF, splits text, and builds in-memory ChromaDB."""
     global vectorstore, raw_docs
 
-    print("importing langchain...")
     from langchain_community.document_loaders import PyPDFLoader
     from langchain_text_splitters import RecursiveCharacterTextSplitter
     from langchain_community.vectorstores import Chroma
-    print("finished import")
 
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed!")
 
-    print("creating temp file")
     temp_pdf_path = f"temp_{file.filename}"
     with open(temp_pdf_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    print("loading pdf...")
     try:
         loader = PyPDFLoader(temp_pdf_path)
         raw_docs = loader.load()
