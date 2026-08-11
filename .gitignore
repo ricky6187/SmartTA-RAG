@@ -8,3 +8,4 @@ venv/
 
 chroma_langchain_db/
 temp_*.pdf
+dockerfile_note

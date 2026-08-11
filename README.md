@@ -27,11 +27,11 @@ This tool allows students to query course materials with source citations and en
 
 1. Create a venv
 
-2. Run `pip install -r requirements.txt`
+2. `cd backend` then run `pip install -r requirements.txt`
 
-3. Create a `.env` file and fill in your own `GEMINI_API_KEY`
+3. Create a `.env` file inside `backend/` and fill in your own `GEMINI_API_KEY`
 
-4. Run `uvicorn main:app --reload`
+4. Inside `backend/`, run `uvicorn main:app --reload`
 
 5. `cd frontend`
 
