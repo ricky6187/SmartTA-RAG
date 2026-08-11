@@ -163,3 +163,9 @@ async def generate_quiz():
         raise HTTPException(status_code=500, detail=str(e))
 
 print("App module loaded successfully, ready for uvicorn")
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=10000, reload=True)
+
