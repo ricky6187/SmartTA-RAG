@@ -78,17 +78,21 @@ async def upload_pdf(file: UploadFile = File(...)):
     """Receives uploaded PDF, splits text, and builds in-memory ChromaDB."""
     global vectorstore, raw_docs
 
+    print("importing langchain...")
     from langchain_community.document_loaders import PyPDFLoader
     from langchain_text_splitters import RecursiveCharacterTextSplitter
     from langchain_community.vectorstores import Chroma
+    print("finished import")
 
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed!")
 
+    print("creating temp file")
     temp_pdf_path = f"temp_{file.filename}"
     with open(temp_pdf_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
+    print("loading pdf...")
     try:
         loader = PyPDFLoader(temp_pdf_path)
         raw_docs = loader.load()
