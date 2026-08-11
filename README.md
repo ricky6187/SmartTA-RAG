@@ -13,6 +13,10 @@ The application is fully dockerized and deployed on **Render**:
   * **Frontend:** served using a lightweight Nginx container.
   * **Backend:** FastAPI running inside a Python 3.12 runtime container handling API requests and integrations.
 
+> **Usage Notice:** This project uses a **free-tier AI API**. Please use it responsibly and refrain from sending an excessive number of requests to prevent hitting rate limits or exceeding usage quotas.
+> 
+> **Note on Free Hosting:** Hosted on Render's free tier. If the app has been inactive, the initial request may take 30–50 seconds while the backend container wakes up.
+
 Check details in `withDocker` branch
 
 ---
