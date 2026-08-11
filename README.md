@@ -3,6 +3,17 @@
 This tool allows students to query course materials with source citations and enables instructors/TAs to auto-generate quizzes from lecture slides.
 
 ---
+
+## Live Deployment
+
+The application is fully dockerized and deployed on **Render**:
+
+* **Live Demo:** [https://smartta-rag-frontend.onrender.com/](https://smartta-rag-frontend.onrender.com/)
+* **Architecture:** Multi-container setup powered by Docker.
+  * **Frontend:** served using a lightweight **Nginx** container.
+  * **Backend:** **FastAPI** running inside a Python 3.12 runtime container handling API requests and integrations.
+
+---
 <img width="1148" height="795" alt="image" src="https://github.com/user-attachments/assets/3a75ab6a-4760-456e-a332-369d4d1886a4" />
 
 ## Core Features
