@@ -1,16 +1,3 @@
-# import os
-# get .env
-# from dotenv import load_dotenv
-# read pdf
-# from langchain_community.document_loaders import PyPDFLoader
-# for chunking
-# from langchain_text_splitters import RecursiveCharacterTextSplitter
-# vectorstores
-from langchain_community.vectorstores import Chroma
-# transfer to vector, call gemini
-from langchain_google_genai import ChatGoogleGenerativeAI
-# from langchain_huggingface import HuggingFaceEmbeddings
-
 from pydantic import BaseModel, Field
 
 class Answer(BaseModel):
