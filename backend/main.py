@@ -1,9 +1,12 @@
 import os
+import sys
 import shutil
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
+
+print(f"Python {sys.version} | Starting up...")
 
 # LangChain Imports
 from langchain_community.document_loaders import PyPDFLoader
@@ -15,13 +18,16 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 from service.rag_service import answer_question_from_rag, Answer
 from service.quiz_service import generate_quiz_from_docs, Quiz
 
+print("All imports OK")
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
 if not api_key:
-    print("api key is missing!")
+    print("FATAL: GEMINI_API_KEY is missing!")
     raise ValueError("Please set GEMINI_API_KEY in .env!")
+
+print("API key found")
 
 app = FastAPI(title="AI Course TA System API", version="1.0")
 
@@ -38,22 +44,26 @@ vectorstore = None
 raw_docs = []
 
 # init Embedding and LLM
+print("Initializing embeddings...")
 try:
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/gemini-embedding-001",
         google_api_key=api_key
     )
+    print("Embeddings initialized OK")
 except Exception as err:
-    print(f"error: {err}")
+    print(f"ERROR initializing embeddings: {err}")
 
-try:   
+print("Initializing LLM...")
+try:
     llm = ChatGoogleGenerativeAI(
         model="gemini-3.5-flash",
         google_api_key=api_key,
         temperature=0.2
     )
+    print("LLM initialized OK")
 except Exception as err:
-    print(f"error: {err}")
+    print(f"ERROR initializing LLM: {err}")
 
 
 # Request Pydantic Model
@@ -151,3 +161,5 @@ async def generate_quiz():
         return quiz_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+print("App module loaded successfully, ready for uvicorn")
