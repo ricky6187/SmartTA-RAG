@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import "./App.css";
 
-// const API_BASE = "https://smartta-rag-backend.onrender.com/api";
+const API_BASE = "https://smartta-rag-backend.onrender.com/api";
 
-const API_BASE = "http://127.0.0.1:8000/api";
 export default function App() {
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("未上傳檔案");
