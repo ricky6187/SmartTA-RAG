@@ -1,16 +1,14 @@
-// src/App.jsx
 import React, { useState } from "react";
 import "./App.css";
 
-const API_BASE = "https://smartta-rag-backend.onrender.com/api";
+// const API_BASE = "https://smartta-rag-backend.onrender.com/api";
 
+const API_BASE = "http://127.0.0.1:8000/api";
 export default function App() {
-  // 狀態管理
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("未上傳檔案");
   const [isUploaded, setIsUploaded] = useState(false);
 
-  // Chat 狀態
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -20,12 +18,10 @@ export default function App() {
   const [inputQuery, setInputQuery] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
 
-  // Quiz 狀態
   const [quizList, setQuizList] = useState([]);
   const [quizLoading, setQuizLoading] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState({});
 
-  // 1. 上傳 PDF 處理
   const handleUpload = async () => {
     if (!file) return alert("請先選擇 PDF 檔案！");
 
@@ -50,7 +46,6 @@ export default function App() {
     }
   };
 
-  // 2. Chat 問答處理
   const handleSendMessage = async () => {
     if (!inputQuery.trim()) return;
     if (!isUploaded) return alert("請先上傳 PDF 講義！");
@@ -58,7 +53,6 @@ export default function App() {
     const userText = inputQuery;
     setInputQuery("");
 
-    // 加入使用者訊息
     setMessages((prev) => [...prev, { role: "user", text: userText }]);
     setChatLoading(true);
 
@@ -86,7 +80,6 @@ export default function App() {
     }
   };
 
-  // 3. 生成 Quiz 處理
   const handleGenerateQuiz = async () => {
     if (!isUploaded) return alert("請先上傳 PDF 講義！");
 
@@ -105,7 +98,6 @@ export default function App() {
     }
   };
 
-  // 選擇答案點擊處理
   const handleOptionClick = (qId, optionIdx) => {
     setSelectedAnswers((prev) => ({
       ...prev,
@@ -120,9 +112,7 @@ export default function App() {
       </header>
 
       <div className="main-layout">
-        {/* 左側邊欄 */}
         <div className="sidebar">
-          {/* 上傳卡片 */}
           <div className="card upload-box">
             <h3>講義上傳</h3>
             <input
@@ -139,7 +129,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* 測驗區塊 */}
           <div className="card quiz-section">
             <h3>課後測驗生成</h3>
             <button
@@ -191,7 +180,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* 右側聊天室 */}
         <div className="chat-container">
           <div className="chat-messages">
             {messages.map((msg, index) => (

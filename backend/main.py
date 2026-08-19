@@ -1,7 +1,7 @@
 import os
 import sys
-import shutil
 import asyncio
+from io import BytesIO
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,16 +19,15 @@ if not api_key:
 
 print("API key found")
 
-
 def _warmup():
     """Pre-load heavy imports + init models in background so first request is fast."""
     print("Warming up imports (background)...")
     try:
-        from langchain_community.document_loaders import PyPDFLoader          # noqa: F401
-        from langchain_text_splitters import RecursiveCharacterTextSplitter   # noqa: F401
-        from langchain_community.vectorstores import Chroma                   # noqa: F401
-        from langchain_google_genai import GoogleGenerativeAIEmbeddings       # noqa: F401
-        from langchain_google_genai import ChatGoogleGenerativeAI             # noqa: F401
+        from pypdf import PdfReader
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+        from langchain_community.vectorstores import Chroma
+        from langchain_google_genai import GoogleGenerativeAIEmbeddings
+        from langchain_google_genai import ChatGoogleGenerativeAI
         print("Heavy imports cached")
         _init_embeddings()
         _init_llm()
@@ -36,19 +35,17 @@ def _warmup():
     except Exception as e:
         print(f"Warmup failed (will retry on first request): {e}")
 
-
 @asynccontextmanager
 async def lifespan(app):
     loop = asyncio.get_running_loop()
     loop.run_in_executor(None, _warmup)
     yield
 
-
 app = FastAPI(title="AI Course TA System API", version="1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://smartta-rag-frontend.onrender.com"],
+    allow_origins=["https://smartta-rag-frontend.onrender.com", "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["GET","POST"],
     allow_headers=["*"],
@@ -60,7 +57,6 @@ raw_docs = []
 embeddings = None
 llm = None
 
-
 def _init_embeddings():
     global embeddings
     if embeddings is None:
@@ -71,7 +67,6 @@ def _init_embeddings():
             google_api_key=api_key
         )
     return embeddings
-
 
 def _init_llm():
     global llm
@@ -85,38 +80,35 @@ def _init_llm():
         )
     return llm
 
-
-# Request Pydantic Model
 class ChatRequest(BaseModel):
     question: str
-
-
-# --- Endpoints ---
 
 @app.get("/")
 def read_root():
     return {"message": "AI Course TA System API is running!"}
-
 
 @app.post("/api/upload")
 async def upload_pdf(file: UploadFile = File(...)):
     """Receives uploaded PDF, splits text, and builds in-memory ChromaDB."""
     global vectorstore, raw_docs
 
-    from langchain_community.document_loaders import PyPDFLoader
+    from pypdf import PdfReader
+    from langchain_core.documents import Document
     from langchain_text_splitters import RecursiveCharacterTextSplitter
     from langchain_community.vectorstores import Chroma
 
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed!")
 
-    temp_pdf_path = f"temp_{file.filename}"
-    with open(temp_pdf_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    pdf_bytes = await file.read()
 
     try:
-        loader = PyPDFLoader(temp_pdf_path)
-        raw_docs = loader.load()
+        # BytesIO(): wrap bytes as pdf for pdfreader to read
+        reader = PdfReader(BytesIO(pdf_bytes))
+        raw_docs = [
+            Document(page_content=page.extract_text() or "", metadata={"page": i, "source": file.filename})
+            for i, page in enumerate(reader.pages)
+        ]
 
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=800,
@@ -130,8 +122,6 @@ async def upload_pdf(file: UploadFile = File(...)):
             embedding=_init_embeddings()
         )
 
-        os.remove(temp_pdf_path)
-
         return {
             "status": "success",
             "filename": file.filename,
@@ -140,10 +130,8 @@ async def upload_pdf(file: UploadFile = File(...)):
         }
 
     except Exception as e:
-        if os.path.exists(temp_pdf_path):
-            os.remove(temp_pdf_path)
-        raise HTTPException(status_code=500, detail=str(e))
-
+        print(f"Upload error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to process PDF")
 
 @app.post("/api/chat", response_model=None)
 async def chat(request: ChatRequest):
@@ -164,7 +152,6 @@ async def chat(request: ChatRequest):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/api/quiz", response_model=None)
 async def generate_quiz():
